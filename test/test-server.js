@@ -150,3 +150,92 @@ describe("Shopping List", function() {
     );
   });
 });
+
+describe("Recipes", function () {
+  before(function () {
+    return runServer();
+  });
+  
+  after(function () {
+    return closeServer();
+  });
+
+  // GET
+  it('Should list items on GET', function () {
+    return chai
+      .request(app)
+      .get("/recipes")
+      .then(function (res) {
+        expect(res).to.have.status(200);
+        expect(res).to.be.json; 
+        expect(res).to.be.a("array");
+        expect(res.body.length).to.be.at.least(0);
+
+        const expectedKeys = ["name", "ingredients"];
+        res.body.forEach(function (item) {
+          expect(item).to.be.a("object");
+          expect(item).to.include.keys(expectedKeys);
+        });
+      });
+  });
+
+  // POST
+  it("Should add an item on POST", function () {
+    const newItem = { name: "cold water", checked: false };
+    return chai
+      .request(app)
+      .post("/recipes")
+      .send(newItem)
+      .then(function (res) {
+        expect(res).to.have.status(201);
+        expect(res).to.be.json;
+        expect(res.body).to.be.a("object")
+        expect(res.body).to.include.keys("id", "name", "checked")
+        expect(res.body.id).to.not.equal(null);
+        expect(res.body).to.deep.equal(
+          Object.assign(newItem, { id: res.body.id })
+        );
+      });
+  });
+
+  // PUT
+  it('Should update item on PUT', function () {
+    const updateData = {
+      name: "foo",
+      checked: true
+    };
+
+    return (chai
+      .request(app)
+      .get("/recipes")
+      .then(function (res) {
+        updateData.id = res.body[0].id;
+        return chai
+          .request(app)
+          .put(`/recipes/${updateData.id}`)
+          .send(updateData);
+      })
+      .then(function (res) {
+        expect(res).to.have.status(200);
+        expect(res).to.be.json;
+        expect(res.body).to.be.a("object");
+        expect(res.body).to.deep.equal(updateData);
+      })
+    );
+  });
+
+  // DELETE
+  it('Should remove item on DELETE', function () {
+    return (
+      chai
+        .request(app)
+        .get("/recipes")
+        .then(function (res) {
+          return chai.request(app).delete(`/recipes/${res.body[0].id}`);
+        })
+        .then(function (res) {
+          expect(res).to.have.status(204);
+        })
+    );
+  });
+});
