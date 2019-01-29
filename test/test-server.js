@@ -169,7 +169,7 @@ describe("Recipes", function () {
         expect(res).to.have.status(200);
         expect(res).to.be.json; 
         expect(res.body).to.be.a("array");
-        expect(res.body.length).to.be.at.least(0);
+        expect(res.body.length).to.be.at.least(1);
 
         const expectedKeys = ["name", "ingredients"];
         res.body.forEach(function (item) {
@@ -180,21 +180,22 @@ describe("Recipes", function () {
   });
 
   // POST
-  it("Should add an item on POST", function () {
-    const newItem = { name: "red beans and rice", ingredients: "red beans, rice, spices", checked: false };
+  it("Should add a recipe on POST", function () {
+    const newRecipe = {
+      name: "red beans and rice", ingredients: ["red beans", "rice", "spices"]
+    };
     return chai
       .request(app)
       .post("/recipes")
-      .send(newItem)
+      .send(newRecipe)
       .then(function (res) {
         expect(res).to.have.status(201);
         expect(res).to.be.json;
         expect(res.body).to.be.a("object")
-        expect(res.body).to.include.keys("id", "name", "ingredients", "checked")
-        expect(res.body.id).to.not.equal(null);
-        expect(res.body).to.deep.equal(
-          Object.assign(newItem, { id: res.body.id })
-        );
+        expect(res.body).to.include.keys("id", "name", "ingredients")
+        expect(res.body.name).to.equal(newRecipe.name);
+        expect(res.body.ingredients).to.be.a("array");
+        expect(res.body.ingedients).to.include.members(newRecipe.ingredients);
       });
   });
 
@@ -202,11 +203,11 @@ describe("Recipes", function () {
   it('Should update item on PUT', function () {
     const updateData = {
       name: "foo",
-      ingredients: "bar",
-      checked: true
+      ingredients: ["bar", "bizz"],
     };
 
-    return (chai
+    return (
+      chai
       .request(app)
       .get("/recipes")
       .then(function (res) {
@@ -217,10 +218,7 @@ describe("Recipes", function () {
           .send(updateData);
       })
       .then(function (res) {
-        expect(res).to.have.status(200);
-        expect(res).to.be.json;
-        expect(res.body).to.be.a("object");
-        expect(res.body).to.deep.equal(updateData);
+        expect(res).to.have.status(204);
       })
     );
   });
