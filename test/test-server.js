@@ -195,7 +195,7 @@ describe("Recipes", function () {
         expect(res.body).to.include.keys("id", "name", "ingredients")
         expect(res.body.name).to.equal(newRecipe.name);
         expect(res.body.ingredients).to.be.a("array");
-        expect(res.body.ingedients).to.include.members(newRecipe.ingredients);
+        expect(res.body.ingredients).to.include.members(newRecipe.ingredients);
       });
   });
 
