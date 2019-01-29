@@ -190,7 +190,7 @@ describe("Recipes", function () {
         expect(res).to.have.status(201);
         expect(res).to.be.json;
         expect(res.body).to.be.a("object")
-        expect(res.body).to.include.keys("id", "name", "checked")
+        expect(res.body).to.include.keys("id", "name", "ingredients", "checked")
         expect(res.body.id).to.not.equal(null);
         expect(res.body).to.deep.equal(
           Object.assign(newItem, { id: res.body.id })
