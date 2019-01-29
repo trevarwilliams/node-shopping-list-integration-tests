@@ -168,7 +168,7 @@ describe("Recipes", function () {
       .then(function (res) {
         expect(res).to.have.status(200);
         expect(res).to.be.json; 
-        expect(res).to.be.a("array");
+        expect(res.body).to.be.a("array");
         expect(res.body.length).to.be.at.least(0);
 
         const expectedKeys = ["name", "ingredients"];
