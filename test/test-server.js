@@ -181,7 +181,7 @@ describe("Recipes", function () {
 
   // POST
   it("Should add an item on POST", function () {
-    const newItem = { name: "cold water", checked: false };
+    const newItem = { name: "red beans and rice", checked: false };
     return chai
       .request(app)
       .post("/recipes")
